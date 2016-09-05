@@ -63,6 +63,7 @@ class ProcessRunner implements ProcessRunnerInterface
         try {
             $process->run($this->buildCallback($listeners));
         } catch (RuntimeException $e) {
+            $this->logger->warning($process->getOutput() . $process->getErrorOutput());
             if (!$bypassErrors) {
                 $this->doExecutionFailure($process->getCommandLine(), $e);
             }
@@ -84,7 +85,7 @@ class ProcessRunner implements ProcessRunnerInterface
         } else {
             $this->logger->info(sprintf('%s executed command successfully', $this->name));
 
-            return $process->getOutput();
+            return $process->getOutput() . " [Errors: {$process->getErrorOutput()}]";
         }
     }
 
